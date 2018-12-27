@@ -6,8 +6,8 @@ spring:
   datasource:
     driver-class-name: com.mysql.jdbc.Driver
     username: root
-    password: hu1234tai
-    url: jdbc:mysql://127.0.0.1:3306/hyt?characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=false
+    password: Hu1234tai!
+    url: jdbc:mysql://192.168.0.9:3306/hyt?characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=false
   freemarker:
     allow-request-override: false
     allow-session-override: false
