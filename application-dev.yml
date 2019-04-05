@@ -1,44 +1,34 @@
-#加密配置
+# 加解密根密码
 jasypt:
   encryptor:
-    password: huyingtai
+    password: pig #根密码
 
-server:
-  tomcat:
-    max-threads: 500 # Maximum amount of worker threads.
-    min-spare-threads: 50 # Minimum amount of worker threads
-
+# Spring 相关
 spring:
   redis:
-    remote: false        #cachecloud 获取
-    host: 127.0.0.1
-    port: 6379
     password:
-  rabbitmq:
-    host: 127.0.0.1
-    port: 5672
-    username: guest
-    password: guest
-  http:
-    multipart:
-      max-file-size: 1000MB
-      max-request-size: 1000MB
-
-redis:
-  cache:
-    expiration: 3601
-
-ribbon:
-  eager-load:
+    host: hu1234tai
+  # zipkin
+  zipkin:
     enabled: true
-    clients: hyt-auth,hyt-upms-service,hyt-db-service
-  Httpclient:
-    enabled: false
-  OkHttp:
-    enabled: true
-  ReadTimeout: 10000
-  ConnectTimeout: 10000
+    base-url: http://bigdata-zipkin
+  sleuth:
+    web:
+      client:
+        enabled: true
+    sampler:
+      # 默认的采样比率为0.1，不能看到所有请求数据
+      # 更改采样比率为1，就能看到所有的请求数据了，但是这样会增加接口调用延迟
+      probability: 1.0
 
+# 暴露监控端点
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+
+# feign 配置
 feign:
   hystrix:
     enabled: true
@@ -48,35 +38,48 @@ feign:
     enabled: false
   client:
     config:
-      feignName:
-        connectTimeout: 30000
-        readTimeout: 30000
+      default:
+        connectTimeout: 10000
+        readTimeout: 10000
   compression:
     request:
       enabled: true
     response:
       enabled: true
 
+# hystrix 配置
 hystrix:
-  threadpool:
-    default:
-      coreSize: 500
-      maxQueueSize: 1000
-      queueSizeRejectionThreshold: 800
   command:
     default:
       execution:
         isolation:
+          strategy: SEMAPHORE
           thread:
             timeoutInMilliseconds: 60000
+  shareSecurityContext: true
 
-#监控短点配置
-management:
-  security:
-    enabled: false
-endpoints:
-  actuator:
-    enabled: true
-  shutdown:
-    enabled: false
+#请求处理的超时时间
+ribbon:
+  ReadTimeout: 10000
+  ConnectTimeout: 10000
 
+# mybaits-plus配置
+mybatis-plus:
+  mapper-locations: classpath:/mapper/*Mapper.xml
+  global-config:
+    banner: false
+    db-config:
+      id-type: 0
+      field-strategy: 1
+      table-underline: true
+      logic-delete-value: 1
+      logic-not-delete-value: 0
+  configuration:
+    map-underscore-to-camel-case: true
+
+# spring security 配置
+security:
+  oauth2:
+    resource:
+      loadBalanced: true
+      token-info-uri: http://bigdata-auth/oauth/check_token
